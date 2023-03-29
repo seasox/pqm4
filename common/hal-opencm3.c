@@ -358,3 +358,14 @@ size_t hal_get_stack_size(void)
 	__asm__ volatile ("mov %0, sp" : "=r" (cur_stack));
   return cur_stack - heap_end;
 }
+
+void hal_wait_a0_setup(void) {
+  rcc_periph_clock_enable(RCC_GPIOA);
+  gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_PULLDOWN, GPIO0);
+}
+
+void hal_wait_a0(void) {
+  /* polling wait for rising flank */
+  while(gpio_get(GPIOA, GPIO0));
+  while(!gpio_get(GPIOA, GPIO0));
+}
